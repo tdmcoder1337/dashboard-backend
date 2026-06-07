@@ -2,6 +2,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
 import authRoutes from './routes/auth.routes.js'
+import productRoutes from './routes/products.routes.js'
 
 dotenv.config()
 
@@ -9,7 +10,11 @@ const app = express()
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: [
+      process.env.CLIENT_URL || 'http://localhost:5173',
+      'http://localhost:5173',
+      'http://localhost:5174',
+    ],
     credentials: true,
   })
 )
@@ -20,6 +25,7 @@ app.get('/api/health', (_req, res) => {
 })
 
 app.use('/api/auth', authRoutes)
+app.use('/api/products', productRoutes)
 
 app.use((_req, res) => {
   res.status(404).json({ message: 'Route not found' })
@@ -30,5 +36,8 @@ app.use((error, _req, res, _next) => {
     message: error.message || 'Internal server error',
   })
 })
+
+
+
 
 export default app
