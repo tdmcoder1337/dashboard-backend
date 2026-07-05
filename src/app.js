@@ -29,7 +29,12 @@ const requireDB = async (req, res, next) => {
   if (mongoose.connection.readyState !== 1) {
     try {
       await connectDB()
-    } catch {
+    } catch (error) {
+      return res.status(503).json({
+        message: 'Database connection failed: ' + error.message,
+      })
+    }
+    if (mongoose.connection.readyState !== 1) {
       return res.status(503).json({ message: 'Database connection failed, please try again later' })
     }
   }
