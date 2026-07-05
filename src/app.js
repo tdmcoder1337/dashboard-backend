@@ -1,7 +1,6 @@
 import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
-import connectDB from './config/db.js'
 import authRoutes from './routes/auth.routes.js'
 import messageRoutes from './routes/messages.routes.js'
 import productRoutes from './routes/products.routes.js'
