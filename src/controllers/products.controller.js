@@ -3,7 +3,7 @@ import { PRODUCT_CATEGORIES } from '../constants/categories.js'
 
 export const getProducts = async (req, res, next) => {
   try {
-    const { kategoriya } = req.query
+    const kategoriya = req.query.kategoriya || req.query.category
     const filter = {}
 
     if (kategoriya && kategoriya !== 'all') {
@@ -11,7 +11,7 @@ export const getProducts = async (req, res, next) => {
     }
 
     const products = await Product.find(filter).sort({ createdAt: -1 })
-    res.json(products)
+    res.json(products.map(p => ({ ...p.toObject(), category: p.kategoriya })))
   } catch (error) {
     next(error)
   }
@@ -29,11 +29,12 @@ export const createProduct = async (req, res, next) => {
       return res.status(400).json({ message: 'nomi, narxi and birlik are required' })
     }
 
-    if (kategoriya && !PRODUCT_CATEGORIES.includes(kategoriya)) {
+    const cat = kategoriya || req.body.category
+    if (cat && !PRODUCT_CATEGORIES.includes(cat)) {
       return res.status(400).json({ message: 'Invalid kategoriya' })
     }
 
-    const product = await Product.create({ nomi, narxi, birlik, kategoriya, rasm })
+    const product = await Product.create({ nomi, narxi, birlik, kategoriya: cat, rasm })
     res.status(201).json(product)
   } catch (error) {
     next(error)
