@@ -19,15 +19,6 @@ const connectDB = async () => {
 
   mongoose.set('strictQuery', true)
 
-  connectionPromise = mongoose.connect(uri, {
-    dbName: 'dashboard',
-    serverSelectionTimeoutMS: 5000,
-    connectTimeoutMS: 5000,
-    socketTimeoutMS: 45000,
-    keepAlive: true,
-    keepAliveInitialDelay: 300000,
-  })
-
   mongoose.connection.on('disconnected', () => {
     console.warn('MongoDB disconnected — will reconnect on next request')
     connectionPromise = null
@@ -38,13 +29,15 @@ const connectDB = async () => {
     connectionPromise = null
   })
 
-  try {
-    await connectionPromise
-    console.log('MongoDB connected to dashboard database')
-  } catch (err) {
-    connectionPromise = null
-    console.error('MongoDB connection error:', err.message)
-  }
+  connectionPromise = mongoose.connect(uri, {
+    dbName: 'dashboard',
+    serverSelectionTimeoutMS: 10000,
+    connectTimeoutMS: 10000,
+    socketTimeoutMS: 45000,
+  })
+
+  await connectionPromise
+  console.log('MongoDB connected to dashboard database')
 }
 
 export default connectDB

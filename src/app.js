@@ -1,6 +1,8 @@
 import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
+import mongoose from 'mongoose'
+import connectDB from './config/db.js'
 import authRoutes from './routes/auth.routes.js'
 import messageRoutes from './routes/messages.routes.js'
 import productRoutes from './routes/products.routes.js'
@@ -23,14 +25,25 @@ app.use(
 )
 app.use(express.json({ limit: '5mb' }))
 
+const requireDB = async (req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    try {
+      await connectDB()
+    } catch {
+      return res.status(503).json({ message: 'Database connection failed, please try again later' })
+    }
+  }
+  next()
+}
+
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' })
 })
 
-app.use('/api/auth', authRoutes)
-app.use('/api/messages', messageRoutes)
-app.use('/api/products', productRoutes)
-app.use('/api/users', userRoutes)
+app.use('/api/auth', requireDB, authRoutes)
+app.use('/api/messages', requireDB, messageRoutes)
+app.use('/api/products', requireDB, productRoutes)
+app.use('/api/users', requireDB, userRoutes)
 
 app.use((_req, res) => {
   res.status(404).json({ message: 'Route not found' })
