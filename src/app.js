@@ -2,7 +2,9 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
 import authRoutes from './routes/auth.routes.js'
+import messageRoutes from './routes/messages.routes.js'
 import productRoutes from './routes/products.routes.js'
+import userRoutes from './routes/users.routes.js'
 
 dotenv.config()
 
@@ -18,18 +20,21 @@ app.use(
     credentials: true,
   })
 )
-app.use(express.json())
+app.use(express.json({ limit: '5mb' }))
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' })
 })
 
 app.use('/api/auth', authRoutes)
+app.use('/api/messages', messageRoutes)
 app.use('/api/products', productRoutes)
+app.use('/api/users', userRoutes)
 
 app.use((_req, res) => {
   res.status(404).json({ message: 'Route not found' })
 })
+
 
 app.use((error, _req, res, _next) => {
   res.status(error.status || 500).json({

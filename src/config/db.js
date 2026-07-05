@@ -8,6 +8,7 @@ const connectDB = async () => {
   }
 
   mongoose.set('strictQuery', true)
+  
 
   await mongoose.connect(uri, {
     dbName: 'dashboard',
