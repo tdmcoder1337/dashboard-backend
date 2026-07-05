@@ -1,7 +1,6 @@
 import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
-import mongoose from 'mongoose'
 import connectDB from './config/db.js'
 import authRoutes from './routes/auth.routes.js'
 import messageRoutes from './routes/messages.routes.js'
@@ -11,13 +10,6 @@ import userRoutes from './routes/users.routes.js'
 dotenv.config()
 
 const app = express()
-
-app.use(async (_req, _res, next) => {
-  if (process.env.MONGODB_URI && mongoose.connection.readyState === 0) {
-    try { await connectDB() } catch { /* ignore */ }
-  }
-  next()
-})
 
 app.use(
   cors({

@@ -26,6 +26,7 @@ const sendUser = (res, status, message, user) => {
       lastLogin: user.lastLogin,
       lastSeen: user.lastSeen,
       isOnline: user.lastSeen && Date.now() - new Date(user.lastSeen).getTime() <= 2 * 60 * 1000,
+    },
   })
 }
 

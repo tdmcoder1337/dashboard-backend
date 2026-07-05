@@ -16,6 +16,8 @@ const connectDB = async () => {
 
   connectionPromise = mongoose.connect(uri, {
     dbName: 'dashboard',
+    serverSelectionTimeoutMS: 5000,
+    connectTimeoutMS: 5000,
   })
 
   try {
