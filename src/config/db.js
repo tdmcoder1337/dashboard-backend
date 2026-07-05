@@ -1,20 +1,30 @@
 import mongoose from 'mongoose'
 
+let connectionPromise = null
+
 const connectDB = async () => {
+  if (connectionPromise) return connectionPromise
+
   const uri = process.env.MONGODB_URI
 
   if (!uri) {
-    throw new Error('MONGODB_URI is missing')
+    console.warn('MONGODB_URI not set — skipping DB connection')
+    return null
   }
 
   mongoose.set('strictQuery', true)
-  
 
-  await mongoose.connect(uri, {
+  connectionPromise = mongoose.connect(uri, {
     dbName: 'dashboard',
   })
 
-  console.log('MongoDB connected to dashboard database')
+  try {
+    await connectionPromise
+    console.log('MongoDB connected to dashboard database')
+  } catch (err) {
+    connectionPromise = null
+    console.error('MongoDB connection error:', err.message)
+  }
 }
 
 export default connectDB
